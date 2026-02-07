@@ -2,294 +2,820 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Hotel Scratch Voucher Portal</title>
+<title>Hotel Voucher Portal</title>
 
-<!-- Firebase SDK -->
+<!-- GOOGLE FONTS -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300..900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300..700&display=swap" rel="stylesheet">
+
+<!-- MATERIAL ICONS -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <style>
+* { box-sizing: border-box; }
+
+/* BACKGROUND */
 body {
-  font-family: "Segoe UI", sans-serif;
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  margin: 0;
+  min-height: 100vh;
+  background: url("https://ik.imagekit.io/lfgz1ccv1s/New%20Folder/bg.jpg")
+    center/cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
-  color: #fff;
 }
 
+/* VOUCHER VIEW BACKGROUND - WHITE */
+body.voucher-view {
+  background: #f3f3f3;
+}
+
+/* LOADER */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 1000;
+}
+
+/* LOGIN CARD '97 UNCHANGED */
 .card {
-  background: #fff;
-  color: #333;
-  border-radius: 16px;
-  padding: 24px;
-  width: 420px;
-}
-
-input, button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-}
-
-button {
-  background: #2a5298;
+  width: 480px;
+  padding: 60px;
+  border-radius: 18px;
+  background: rgba(166,182,201,0.23);
+  backdrop-filter: blur(1.8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
   color: #fff;
-  border: none;
-  cursor: pointer;
+}
+
+/* DASHBOARD - FULL WIDTH FOR VOUCHER VIEW */
+.dashboard {
+  width: 100%;
+  max-width: 100%;
+  padding: 60px;
+  border-radius: 18px;
+  background: rgba(166,182,201,0.23);
+  backdrop-filter: blur(1.8px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  color: #fff;
+}
+
+/* DASHBOARD - 480PX WIDTH ON CREATE SCREEN */
+.dashboard.create-mode {
+  width: 480px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* CREATE VOUCHER SCREEN - GLASS EFFECT */
+#createScreen {
+  
+  position: relative;
+  
+}
+
+/* VOUCHER VIEW DASHBOARD - WHITE BACKGROUND */
+body.voucher-view .dashboard {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+/* ALL VOUCHERS SCREEN - FULL WIDTH */
+#viewScreen {
+  width: 100%;
+  max-width: 100%;
+}
+
+.card h1,
+.dashboard h2 {
+  text-align: center;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 50px;
+  margin: 0 0 30px;
+}
+
+body.voucher-view .dashboard h2 {
+  color: #000000;
+}
+
+.card p {
+  text-align: center;
+  opacity: 0.85;
+  margin-bottom: 35px;
+  font-family: "Darker Grotesque", sans-serif;
+  font-size: 20px;
+  letter-spacing: 1.5px;
+}
+
+/* INPUT GROUP */
+.input-group {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.input-group .material-icons-outlined {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: #9aa0a6;
+  z-index: 1;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 18px 18px 18px 50px;
   border-radius: 6px;
+  border: 2px solid transparent;
+  outline: none;
+  font-size: 16px;
 }
 
-button:disabled {
-  background: #aaa;
+/* CREATE VOUCHER INPUTS - MATCH LOGIN SCREEN STYLING */
+#createScreen .input-group {
+  margin: 0 auto 18px auto;
+  display: block;
+  width: 100%;
+  max-width: 380px;
 }
 
-.hidden {
+#createScreen .input-group input {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto 18px auto;
+  display: block;
+}
+
+/* ERROR */
+.input-group.error input {
+  border-color: #ff4d4d;
+  animation: shake 0.3s;
+}
+
+.error-text {
+  font-size: 13px;
+  color: #ff4d4d;
+  margin: 4px 0 10px 6px;
   display: none;
 }
 
-.voucher {
-  border: 1px solid #ddd;
+/* BUTTON */
+button {
+  width: 100%;
+  padding: 15px 60px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  background: #3F6285;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+button:hover { opacity: 0.9; }
+
+/* CREATE VOUCHER BUTTONS - MATCH INPUT WIDTH */
+#createScreen button {
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  display: block;
+  padding: 15px 60px;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+.hidden { display: none; }
+
+/* LOGOUT */
+.logout-btn {
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 90px !important;
+  padding: 7px 7px !important;
+  font-size: 15px;
+  font-weight: 600;
+  background: #3F6285;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* MODAL POPUP */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal {
+  background: white;
+  padding: 30px;
+  border-radius: 18px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal {
+  transform: translateY(0);
+}
+
+.modal h3 {
+  margin: 0 0 15px 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 28px;
+  color: #333;
+}
+
+.modal p {
+  margin: 0 0 25px 0;
+  color: #666;
+  font-family: "Darker Grotesque", sans-serif;
+  font-size: 16px;
+}
+
+.modal-input-group {
+  margin-bottom: 20px;
+}
+
+.modal-input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-family: "Darker Grotesque", sans-serif;
+}
+
+.modal-input-group input {
+  width: 100%;
   padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.modal-input-group input:focus {
+  border-color: #3F6285;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 12px 24px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.modal-actions button:hover {
+  opacity: 0.9;
+}
+
+.btn-primary {
+  background: #3F6285;
+  color: white;
+}
+
+.btn-secondary {
+  background: #f3f3f3;
+  color: #333;
+}
+
+.btn-danger {
+  background: #e74c3c;
+  color: white;
+}
+
+/* VOUCHER GRID */
+.voucher-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  padding: 30px 20px 120px 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* RESPONSIVE GRID */
+@media (max-width: 1200px) {
+  .voucher-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1024px) {
+  .voucher-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    padding: 25px 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .voucher-list {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    padding: 20px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .voucher-list {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    padding: 15px 5px;
+  }
+}
+
+@media (max-width: 400px) {
+  .voucher-list {
+    padding: 10px;
+  }
+  .coupon {
+    max-width: 280px;
+  }
+}
+
+/* FOOD COUPON STYLING */
+.coupon {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 18px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  margin: 0 auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.coupon:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+/* COLOR THEMES */
+.coupon-theme-pink {
+  background: linear-gradient(180deg, #cc6bb0 0%, #e05b9b 100%);
+}
+
+.coupon-theme-green {
+  background: linear-gradient(180deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.coupon-theme-red {
+  background: linear-gradient(180deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.coupon-theme-blue {
+  background: linear-gradient(180deg, #3498db 0%, #2980b9 100%);
+}
+
+.coupon-theme-orange {
+  background: linear-gradient(180deg, #e67e22 0%, #d35400 100%);
+}
+
+.coupon-theme-black {
+  background: linear-gradient(180deg, #34495e 0%, #2c3e50 100%);
+}
+
+/* EVENLY SPACED FOOD ICON PATTERN */
+.coupon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.08'%3E%3C!-- Burger (Top Left) --%3E%3Crect x='20' y='20' width='24' height='5' rx='3'/%3E%3Crect x='22' y='27' width='20' height='5' rx='3'/%3E%3Crect x='20' y='34' width='24' height='5' rx='3'/%3E%3C!-- Pizza (Top Right) --%3E%3Cpolygon points='78,20 98,38 58,38'/%3E%3Ccircle cx='74' cy='30' r='2'/%3E%3Ccircle cx='84' cy='34' r='2'/%3E%3C!-- Coke Bottle (Center) --%3E%3Crect x='54' y='48' width='12' height='28' rx='4'/%3E%3Crect x='56' y='42' width='8' height='6' rx='2'/%3E%3C!-- Fries (Bottom Left) --%3E%3Crect x='22' y='78' width='18' height='16' rx='3'/%3E%3Crect x='24' y='70' width='3' height='8'/%3E%3Crect x='29' y='68' width='3' height='10'/%3E%3Crect x='34' y='70' width='3' height='8'/%3E%3C!-- Drink Cup (Bottom Right) --%3E%3Crect x='82' y='76' width='14' height='20' rx='2'/%3E%3Crect x='86' y='70' width='6' height='6'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 120px 120px;
+  pointer-events: none;
+}
+
+/* Content */
+.coupon-content {
+  position: relative;
+  padding: 4px 2px 2px;
+  text-align: center;
+}
+
+.title {
+  font-size: 30px;
+  letter-spacing: 1px;
+  opacity: 0.9;
+}
+
+/* DOUBLE TEXT EFFECT */
+.percent-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.percent-bg {
+  position: absolute;
+  top: -30px;
+  left: -25px;
+  font-size: 120px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 13px;
+}
+
+.percent {
+  position: relative;
+  top: 0px;
+  font-size: 70px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.95);
+}
+
+.off {
+  position: relative;
+  top: -10px;
+  font-size: 22px;
+  letter-spacing: 2px;
+}
+
+/* Tear Line */
+.tear-line {
+  position: relative;
+  margin: -5px 0;
+  border-top: 2px dashed rgba(255,255,255,0.65);
+  background: transparent;
+}
+
+/* Side Curve Cuts */
+.tear-line::before,
+.tear-line::after {
+  content: "";
+  position: absolute;
+  top: -14px;
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border-radius: 50%;
+}
+
+.tear-line::before {
+  left: -14px;
+}
+
+.tear-line::after {
+  right: -14px;
+}
+
+/* Footer */
+.coupon-footer {
+  position: relative;
+  padding: 22px 0 28px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.coupon button {
+  border: none;
+  background: #fff;
+  color: #000000;
+  padding: 11px 38px;
+  border-radius: 30px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease;
+  margin: 0;
+  display: inline-block;
+  flex: 1;
+  max-width: 120px;
+}
+
+.coupon button:hover {
+  transform: scale(1.06);
 }
 </style>
 </head>
 
 <body>
 
+<div id="loader">Loading...</div>
+
 <!-- LOGIN -->
-<div class="card" id="loginCard">
-  <h2>Manager Login</h2>
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button id="loginBtn">Login</button>
+<div class="card hidden" id="loginCard">
+  <h1>Hotel Vouchers</h1>
+  <p>Good Meal. Better deals.</p>
+
+  <div class="input-group" id="emailGroup">
+    <span class="material-icons-outlined">mail</span>
+    <input id="email" placeholder="Email" />
+  </div>
+  <div class="error-text" id="emailError"></div>
+
+  <div class="input-group" id="passwordGroup">
+    <span class="material-icons-outlined">lock</span>
+    <input id="password" type="password" placeholder="Password" />
+  </div>
+  <div class="error-text" id="passwordError"></div>
+
+  <button id="loginBtn">LOGIN</button>
 </div>
 
 <!-- DASHBOARD -->
-<div class="card hidden" id="dashboard">
-  <h2>Create Voucher</h2>
-  <input id="title" placeholder="Voucher Title">
-  <input id="discount" placeholder="Discount">
-  <button id="createBtn">Create Voucher</button>
+<div class="dashboard hidden" id="dashboard">
 
-  <hr style="margin:20px 0;">
-  <h3>All Vouchers</h3>
-  <div id="voucherList">Loading...</div>
+  <!-- CREATE -->
+  <div id="createScreen">
+    <button class="logout-btn" onclick="auth.signOut()">Logout</button>
 
-  <button id="qrBtn" style="margin-top:15px;">Generate Customer QR</button>
-  <button id="logoutBtn" style="margin-top:10px;background:#555;">Logout</button>
+    <h2>Create Vouchers</h2>
+
+    <div class="input-group" id="titleGroup">
+      <span class="material-icons-outlined">sell</span>
+      <input id="title" placeholder="Voucher Title">
+    </div>
+    <div class="error-text" id="titleError"></div>
+
+    <div class="input-group" id="discountGroup">
+      <span class="material-icons-outlined">percent</span>
+      <input id="discount" placeholder="Discount">
+    </div>
+    <div class="error-text" id="discountError"></div>
+
+    <button id="createBtn">CREATE VOUCHER</button>
+    <br><br>
+    <button id="goViewBtn">VIEW ALL VOUCHERS</button>
+  </div>
+
+  <!-- VIEW -->
+  <div id="viewScreen" class="hidden">
+    <h2>All Vouchers</h2>
+    <div class="voucher-list" id="voucherList"></div>
+    <div style="position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);">
+      <button id="backBtn" style="width: 300px; padding: 15px; font-size: 16px;">BACK</button>
+    </div>
+  </div>
+
 </div>
 
-<!-- CUSTOMER -->
-<div class="card hidden" id="customer"></div>
+<!-- MODAL POPUPS -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal">
+    <h3>Edit Voucher</h3>
+    <div class="modal-input-group">
+      <label for="editTitle">Voucher Title</label>
+      <input type="text" id="editTitle" placeholder="Enter voucher title">
+    </div>
+    <div class="modal-input-group">
+      <label for="editDiscount">Discount</label>
+      <input type="text" id="editDiscount" placeholder="Enter discount">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-primary" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal">
+    <h3>Delete Voucher</h3>
+    <p>Are you sure you want to delete this voucher?</p>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
 
 <script>
-/* 🔥 FIREBASE INIT */
 firebase.initializeApp({
   apiKey: "AIzaSyAAkMO0zICxPTPQ_fTADGhzA6DsGw1TCaU",
   authDomain: "humvoucher.firebaseapp.com",
-  projectId: "humvoucher",
-  storageBucket: "humvoucher.firebasestorage.app",
-  messagingSenderId: "680552131862",
-  appId: "1:680552131862:web:d786e7fd4c581cff8b3437"
+  projectId: "humvoucher"
 });
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* ✅ KEEP SESSION AFTER REFRESH */
-auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+let HOTEL_ID=null, unsubscribe=null;
 
-let HOTEL_ID = null;
-let unsubscribeVouchers = null;
-
-/* 📧 EMAIL VALIDATION */
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-/* 🔁 AUTO RESTORE SESSION */
-auth.onAuthStateChanged(async (user) => {
-  if (user) {
-    const email = user.email;
-
-    if (email === "deepak@gmail.com") HOTEL_ID = "HOTEL_001";
-    else if (email === "aman@gmail.com") HOTEL_ID = "HOTEL_002";
-    else {
-      await auth.signOut();
-      return;
-    }
-
-    document.getElementById("loginCard").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-
-    loadVouchers();
-  } else {
-    document.getElementById("dashboard").classList.add("hidden");
-    document.getElementById("customer").classList.add("hidden");
-    document.getElementById("loginCard").classList.remove("hidden");
-  }
+auth.onAuthStateChanged(u=>{
+  loader.style.display="none";
+  if(!u) return showLogin();
+  HOTEL_ID = u.email==="deepak@gmail.com"?"HOTEL_001":"HOTEL_002";
+  showDashboard();
 });
 
-/* 🔐 LOGIN */
-document.getElementById("loginBtn").onclick = async () => {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value.trim();
-
-  if (!email || !password) {
-    alert("Please enter email and password");
-    return;
-  }
-
-  if (!isValidEmail(email)) {
-    alert("Invalid email format");
-    return;
-  }
-
-  try {
-    await auth.signInWithEmailAndPassword(email, password);
-  } catch (err) {
-    alert(err.message);
-  }
+loginBtn.onclick=async()=>{
+  resetErrors();
+  if(!email.value)return showError("email","Email required");
+  if(!password.value)return showError("password","Password required");
+  try{ await auth.signInWithEmailAndPassword(email.value,password.value);}
+  catch{ showError("password","Invalid credentials");}
 };
 
-/* 🚪 LOGOUT */
-document.getElementById("logoutBtn").onclick = async () => {
-  await auth.signOut();
+function showError(f,m){
+  document.getElementById(f+"Group").classList.add("error");
+  document.getElementById(f+"Error").innerText=m;
+  document.getElementById(f+"Error").style.display="block";
+}
+
+function resetErrors(){
+  ["email","password","title","discount"].forEach(f=>{
+    let g=document.getElementById(f+"Group");
+    let e=document.getElementById(f+"Error");
+    if(g)g.classList.remove("error");
+    if(e)e.style.display="none";
+  });
+}
+
+createBtn.onclick=async()=>{
+  resetErrors();
+  if(!title.value)return showError("title","Title required");
+  if(!discount.value)return showError("discount","Discount required");
+  await db.collection("hotels").doc(HOTEL_ID).collection("vouchers")
+    .add({title:title.value,discount:discount.value,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+  title.value=discount.value="";
 };
 
-/* ➕ CREATE VOUCHER */
-document.getElementById("createBtn").onclick = async () => {
-  const title = document.getElementById("title").value.trim();
-  const discount = document.getElementById("discount").value.trim();
-
-  if (!title || !discount) {
-    alert("Please enter title and discount");
-    return;
-  }
-
-  await db.collection("hotels")
-    .doc(HOTEL_ID)
-    .collection("vouchers")
-    .add({
-      title,
-      discount,
-      used: false,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-
-  document.getElementById("title").value = "";
-  document.getElementById("discount").value = "";
+goViewBtn.onclick=()=>{
+  createScreen.classList.add("hidden");
+  viewScreen.classList.remove("hidden");
+  document.body.classList.add("voucher-view");
+  document.getElementById('dashboard').classList.remove('create-mode');
+  loadVouchers();
 };
 
-/* 📄 LOAD VOUCHERS */
-function loadVouchers() {
-  const list = document.getElementById("voucherList");
-  list.innerHTML = "Loading...";
+backBtn.onclick=()=>{
+  viewScreen.classList.add("hidden");
+  createScreen.classList.remove("hidden");
+  document.body.classList.remove("voucher-view");
+  document.getElementById('dashboard').classList.add('create-mode');
+};
 
-  if (unsubscribeVouchers) unsubscribeVouchers();
+function getRandomCouponTheme() {
+  const themes = [
+    'coupon-theme-pink',
+    'coupon-theme-green', 
+    'coupon-theme-red',
+    'coupon-theme-blue',
+    'coupon-theme-orange',
+    'coupon-theme-black'
+  ];
+  const randomIndex = Math.floor(Math.random() * themes.length);
+  return themes[randomIndex];
+}
 
-  unsubscribeVouchers = db.collection("hotels")
-    .doc(HOTEL_ID)
-    .collection("vouchers")
-    .orderBy("createdAt", "desc")
-    .onSnapshot(snapshot => {
-      list.innerHTML = "";
-
-      if (snapshot.empty) {
-        list.innerHTML = "No vouchers available";
-        return;
-      }
-
-      snapshot.forEach(doc => {
-        const v = doc.data();
-        const div = document.createElement("div");
-        div.className = "voucher";
-
-        div.innerHTML = `
-          <strong>${v.title}</strong><br>
-          Discount: ${v.discount}<br>
-          Status: ${v.used ? "❌ Used" : "✅ Active"}<br><br>
-        `;
-
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "✏️ Edit";
-        editBtn.disabled = v.used;
-        editBtn.onclick = () => editVoucher(doc.id, v);
-
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "🗑 Delete";
-        delBtn.style.background = "#c0392b";
-        delBtn.onclick = () => deleteVoucher(doc.id);
-
-        div.append(editBtn, delBtn);
-        list.appendChild(div);
+function loadVouchers(){
+  if(unsubscribe)unsubscribe();
+  unsubscribe=db.collection("hotels").doc(HOTEL_ID)
+    .collection("vouchers").orderBy("createdAt","desc")
+    .onSnapshot(s=>{
+      voucherList.innerHTML="";
+      s.forEach(d=>{
+        const v=d.data();
+        const themeClass = getRandomCouponTheme();
+        voucherList.innerHTML+=`
+          <div class="coupon ${themeClass}">
+            <div class="coupon-content">
+              <p class="title">${v.title}</p>
+              <div class="percent-wrapper">
+                <div class="percent-bg">${v.discount}</div>
+                <div class="percent">${v.discount}%</div>
+              </div>
+              <p class="off">OFF</p>
+            </div>
+            <div class="tear-line"></div>
+            <div class="coupon-footer">
+              <button onclick="editVoucher('${d.id}','${v.title}','${v.discount}')">Edit</button>
+              <button onclick="deleteVoucher('${d.id}')">Delete</button>
+            </div>
+          </div>`;
       });
     });
 }
 
-/* ✏️ EDIT */
-function editVoucher(id, v) {
-  const title = prompt("Edit title", v.title);
-  const discount = prompt("Edit discount", v.discount);
-  if (!title || !discount) return;
+// MODAL STATE
+let currentEditId = null;
+let currentDeleteId = null;
 
-  db.collection("hotels")
-    .doc(HOTEL_ID)
-    .collection("vouchers")
-    .doc(id)
-    .update({ title, discount });
+// MODAL FUNCTIONS
+function showModal(modalId) {
+  document.getElementById(modalId).classList.add('active');
 }
 
-/* 🗑 DELETE */
-function deleteVoucher(id) {
-  if (!confirm("Delete voucher?")) return;
-
-  db.collection("hotels")
-    .doc(HOTEL_ID)
-    .collection("vouchers")
-    .doc(id)
-    .delete();
+function closeModal() {
+  document.getElementById('editModal').classList.remove('active');
+  document.getElementById('deleteModal').classList.remove('active');
+  currentEditId = null;
+  currentDeleteId = null;
 }
 
-/* 🎯 CUSTOMER FLOW */
-document.getElementById("qrBtn").onclick = () => {
-  document.getElementById("dashboard").classList.add("hidden");
-  const c = document.getElementById("customer");
-  c.classList.remove("hidden");
-  c.innerHTML = `<button onclick="scanVoucher()">🎯 Simulate Scan</button>`;
+// EDIT VOUCHER FUNCTION
+window.editVoucher = (id, title, discount) => {
+  currentEditId = id;
+  document.getElementById('editTitle').value = title;
+  document.getElementById('editDiscount').value = discount;
+  showModal('editModal');
 };
 
-function scanVoucher() {
-  const c = document.getElementById("customer");
+window.saveEdit = async () => {
+  if (!currentEditId) return;
+  
+  const title = document.getElementById('editTitle').value.trim();
+  const discount = document.getElementById('editDiscount').value.trim();
+  
+  if (!title || !discount) {
+    alert('Please fill in both title and discount');
+    return;
+  }
+  
+  try {
+    await db.collection("hotels").doc(HOTEL_ID)
+      .collection("vouchers").doc(currentEditId).update({title, discount});
+    closeModal();
+  } catch (error) {
+    console.error("Error updating voucher:", error);
+    alert("Error updating voucher. Please try again.");
+  }
+};
 
-  db.collection("hotels")
-    .doc(HOTEL_ID)
-    .collection("vouchers")
-    .where("used", "==", false)
-    .get()
-    .then(snapshot => {
-      if (snapshot.empty) {
-        c.innerHTML = "<h2>No vouchers left</h2>";
-        return;
-      }
+// DELETE VOUCHER FUNCTION
+window.deleteVoucher = (id) => {
+  currentDeleteId = id;
+  showModal('deleteModal');
+};
 
-      const d = snapshot.docs[Math.floor(Math.random() * snapshot.docs.length)];
-      const v = d.data();
+window.confirmDelete = async () => {
+  if (!currentDeleteId) return;
+  
+  try {
+    await db.collection("hotels").doc(HOTEL_ID)
+      .collection("vouchers").doc(currentDeleteId).delete();
+    closeModal();
+  } catch (error) {
+    console.error("Error deleting voucher:", error);
+    alert("Error deleting voucher. Please try again.");
+  }
+};
 
-      d.ref.update({ used: true });
-
-      c.innerHTML = `
-        <h2>🎉 You Won</h2>
-        <p>${v.title}</p>
-        <strong>${v.discount}</strong>
-      `;
-    });
+function showLogin(){ loginCard.classList.remove("hidden"); dashboard.classList.add("hidden"); }
+function showDashboard(){ 
+  loginCard.classList.add("hidden"); 
+  dashboard.classList.remove("hidden"); 
+  dashboard.classList.add('create-mode');
 }
 </script>
+
 </body>
 </html>
