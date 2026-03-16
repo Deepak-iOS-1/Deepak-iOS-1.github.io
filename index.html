@@ -399,7 +399,10 @@ button:hover { opacity: 0.9; }
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
+.coupon-used{
+filter:grayscale(100%);
+opacity:0.7;
+}
 .coupon:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px rgba(0,0,0,0.3);
@@ -684,7 +687,7 @@ createBtn.onclick=async()=>{
   if(!title.value)return showError("title","Title required");
   if(!discount.value)return showError("discount","Discount required");
   await db.collection("hotels").doc(HOTEL_ID).collection("vouchers")
-    .add({title:title.value,discount:discount.value,isUsed:false,,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    .add({title:title.value,discount:discount.value,used:false,,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
   title.value=discount.value="";
 };
 
@@ -723,8 +726,11 @@ function loadVouchers(){
     .onSnapshot(s=>{
       voucherList.innerHTML="";
       s.forEach(d=>{
-        const v=d.data();
-        const themeClass = getRandomCouponTheme();
+       const theme=v.used
+? "coupon-theme-black coupon-used"
+: getRandomCouponTheme();
+
+const disable=v.used?"disabled":"";
         voucherList.innerHTML+=`
           <div class="coupon ${themeClass}">
             <div class="coupon-content">
