@@ -687,7 +687,7 @@ createBtn.onclick=async()=>{
   if(!title.value)return showError("title","Title required");
   if(!discount.value)return showError("discount","Discount required");
   await db.collection("hotels").doc(HOTEL_ID).collection("vouchers")
-    .add({title:title.value,discount:discount.value,used:false,,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
+    .add({title:title.value,discount:discount.value,used:false,createdAt:firebase.firestore.FieldValue.serverTimestamp()});
   title.value=discount.value="";
 };
 
