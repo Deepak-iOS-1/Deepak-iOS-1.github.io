@@ -726,11 +726,13 @@ function loadVouchers(){
     .onSnapshot(s=>{
       voucherList.innerHTML="";
       s.forEach(d=>{
-       const theme=v.used
+      const v=d.data();
+
+const theme=v.isUsed
 ? "coupon-theme-black coupon-used"
 : getRandomCouponTheme();
 
-const disable=v.used?"disabled":"";
+const disable=v.isUsed?"disabled":"";
         voucherList.innerHTML+=`
           <div class="coupon ${themeClass}">
             <div class="coupon-content">
