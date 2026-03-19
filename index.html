@@ -399,10 +399,7 @@ button:hover { opacity: 0.9; }
   box-shadow: 0 10px 30px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-.coupon-used{
-filter:grayscale(100%);
-opacity:0.7;
-}
+
 .coupon:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 40px rgba(0,0,0,0.3);
@@ -545,6 +542,25 @@ opacity:0.7;
 
 .coupon button:hover {
   transform: scale(1.06);
+}
+
+/* USED VOUCHER STYLES */
+.coupon.used {
+  filter: grayscale(100%) brightness(0.8);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.coupon.used .coupon-footer button {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.coupon.used .coupon-footer button:hover {
+  transform: none;
 }
 </style>
 </head>
@@ -726,15 +742,11 @@ function loadVouchers(){
     .onSnapshot(s=>{
       voucherList.innerHTML="";
       s.forEach(d=>{
-      const v=d.data();
-
-const theme=v.isUsed
-? "coupon-theme-black coupon-used"
-: getRandomCouponTheme();
-
-const disable=v.isUsed?"disabled":"";
+        const v=d.data();
+        const themeClass = getRandomCouponTheme();
+        const usedClass = v.used ? 'used' : '';
         voucherList.innerHTML+=`
-          <div class="coupon ${themeClass}">
+          <div class="coupon ${themeClass} ${usedClass}">
             <div class="coupon-content">
               <p class="title">${v.title}</p>
               <div class="percent-wrapper">
